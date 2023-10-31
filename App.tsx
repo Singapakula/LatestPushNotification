@@ -5,8 +5,8 @@
  * @format
  */
 
-import React ,{useEffect,useState} from 'react';
-import type {PropsWithChildren} from 'react';
+import React, { useEffect, useState } from 'react';
+import type { PropsWithChildren } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -14,7 +14,7 @@ import {
   StyleSheet,
   Text,
   useColorScheme,
-  View,PermissionsAndroid, Alert
+  View, PermissionsAndroid, Alert
 } from 'react-native';
 import messaging from '@react-native-firebase/messaging'
 
@@ -26,11 +26,15 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
+import NotificationSounds from 'react-native-notification-sounds';
+import notifee from '@notifee/react-native';
+
+
 type SectionProps = PropsWithChildren<{
   title: string;
 }>;
 
-function Section({children, title}: SectionProps): JSX.Element {
+function Section({ children, title }: SectionProps): JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
   return (
     <View style={styles.sectionContainer}>
@@ -86,20 +90,53 @@ function App(): JSX.Element {
     getToken();
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+      showNotification(remoteMessage);
     });
     return unsubscribe;
     // messaging().setBackgroundMessageHandler(remoteMessage => {    //   console.log('Message handled in the background!', remoteMessage);    // }); 
   }, []);
 
+  const showNotification = async (notif: any) => {
+    const body = JSON.stringify(notif?.notification?.body);
+    const title = JSON.stringify(notif?.notification?.title);
+    await notifee.requestPermission();
+    // Retrieve a list of system notification sounds
+    const soundsList = await NotificationSounds.getNotifications('notification');
+    // Create a channel (required for Android)
+    const channelId = await notifee.createChannel({
+      id: 'default',
+      // id: "custom-sound",
+      name: "System Sound",
+      // Set sound to Aldebaran
+      // (url: "content://media/internal/audio/media/30")
+      sound:'notification',
+      // name: 'Default Channel',
+    });
+
+    // Display a notification
+    await notifee.displayNotification({
+      title: title,
+      body: body,
+      android: {
+        channelId,
+          sound: 'notification',
+        // smallIcon: 'name-of-a-small-icon', // optional, defaults to 'ic_launcher'.
+        // pressAction is needed if you want the notification to open the app when pressed
+        pressAction: {
+          id: 'default',
+        },
+      },
+    });
+  }
   useEffect(() => {
     // Assume a message-notification contains a "type" property in the data payload of the screen to open
-   // getToken();
+    // getToken();
     messaging().onNotificationOpenedApp(remoteMessage => {
       console.log(
         'Notification caused app to open from background state:',
         remoteMessage.notification,
       );
-     
+
     });
 
     // Check whether an initial notification is available
@@ -111,9 +148,9 @@ function App(): JSX.Element {
             'Notification caused app to open from quit state:',
             remoteMessage.notification,
           );
-          
+
         }
-      
+
       });
   }, []);
   return (
