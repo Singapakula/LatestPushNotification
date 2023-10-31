@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "156118382922",
+    "project_id": "latestpushnotification-4b4ad",
+    "storage_bucket": "latestpushnotification-4b4ad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156118382922:android:6f9e7c3e8a53f128a269b3",
+        "android_client_info": {
+          "package_name": "com.latestpushnotification"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnQkJMl1hcay0qsnXKODB9dyeLEm9T1aU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
