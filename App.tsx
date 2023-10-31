@@ -62,6 +62,10 @@ function App(): JSX.Element {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+
+
+  //this is the Firebase notification Function
   async function requestUserPermission() {
     const andro = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,);
     const authStatus = await messaging().requestPermission();
